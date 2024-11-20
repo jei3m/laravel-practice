@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.note-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* New Note Button */
+.new-note-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.new-note-btn:hover {
+    background-color: #0056b3;
+}
+
+/* List of Notes */
+.notes-list {
+    margin-top: 20px;
+}
+
+/* Individual Note Item */
+.note-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Note Body */
+.note-body {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Note Actions */
+.note-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.note-action {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.note-edit-button {
+    background-color: #ffc107;
+}
+
+.note-edit-button:hover {
+    background-color: #e0a800;
+}
+
+.note-view-button {
+    background-color: #28a745;
+}
+
+.note-view-button:hover {
+    background-color: #218838;
+}
+
+.note-delete-button {
+    background-color: #dc3545;
+    cursor: pointer;
+}
+
+.note-delete-button:hover {
+    background-color: #c82333;
+}
+
+/* Additional Styles for show.blade.php, create.blade.php, and edit.blade.php */
+
+.note-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.note-form {
+    margin-top: 20px;
+}
+
+.note-form .form-group {
+    margin-bottom: 20px;
+}
+
+.note-form label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.note-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.note-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.note-form button:hover {
+    background-color: #0056b3;
+}
+
+.note-form .btn-secondary {
+    background-color: #6c757d;
+}
+
+.note-form .btn-secondary:hover {
+    background-color: #5a6268;
+}
