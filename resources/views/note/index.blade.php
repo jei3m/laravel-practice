@@ -23,5 +23,18 @@
                 </div>
             @endforeach
         </div>
+            @if (session('success'))
+                <script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: '{{ session('success') }}',
+                        timer: 3000,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6'
+                    });
+                </script>
+            @endif
     </div>
 </x-layout>
