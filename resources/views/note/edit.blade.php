@@ -10,5 +10,10 @@
             </div>
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Note</button>
         </form>
+        @if (session('success'))
+            <div class="alert alert-success mt-4">
+                {{ session('success') }}
+            </div>
+        @endif
     </div>
 </x-layout>
