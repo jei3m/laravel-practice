@@ -11,14 +11,15 @@
             </form>
         </div>
         <table class="w-full table-auto border-collapse">
+
             <thead>
                 <tr>
                     <th class="text-left p-4 w-3/4">Note</th>
                     <th class="text-right p-4 w-1/4">Actions</th>
                 </tr>
             </thead>
-            <tbody>
 
+            <tbody>
                 @foreach ($notes as $note)
                     <tr>
                         <td class="p-4">{{ Str::limit($note->note, 50) }}</td>  
@@ -37,6 +38,7 @@
                     </tr>
                 @endforeach
             </tbody>
+            
         </table>
 
         <div class="pagination mt-4 p-4">
@@ -45,7 +47,7 @@
 
         </div>
         
-        @if (session('success') && request()->has('status'))
+        @if (session('success'))
             <script>
                 Swal.fire({
                     icon: 'success',
@@ -55,6 +57,11 @@
                     showConfirmButton: true,
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#3085d6'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to /notes when the "OK" button is clicked
+                        window.location.href = '/note';
+                    }
                 });
             </script>
         @endif
