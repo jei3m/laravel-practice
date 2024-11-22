@@ -14,7 +14,7 @@ class NoteController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $perPage = $request->input('perPage', 5); // default to 10 per page
+        $perPage = $request->input('perPage', 5);
     
         $notes = Note::query()->orderBy('created_at', 'desc');
     

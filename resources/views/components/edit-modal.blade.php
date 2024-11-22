@@ -1,49 +1,52 @@
-<div id="modal-edit" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center">
+<div id="editmodal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center">
     <div class="modal-close modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
     <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+
+        <!-- Add your modal content here -->
         <div class="modal-content py-4 text-left px-6">
             <div class="flex justify-between items-center pb-3">
-                <p class="text-2xl font-bold">Edit Note</p>
+                <p class="text-2xl font-bold">Edit note</p>
                 <div class="modal-close cursor-pointer z-50">
                     <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
                         <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
                     </svg>
                 </div>
             </div>
-            <form action="{{ route('note.update', $note->id) }}" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
-                @csrf
-                @method('PUT')
-                <input type="hidden" id="note-id" value="">
-                <textarea id="note-content" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10"></textarea>
-                <button type="submit" id="submit-btn" class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Note</button>
-            </form>
+
+            <div class="note-container w-full mx-auto">
+                <form action="{{ route('note.update', $note->id) }}" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group mb-4">
+                        <label for="note" class="block text-lg font-medium text-gray-700">Note Content</label>
+                        <textarea name="note" id="note" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10" onkeypress="return allowOnlyLetters(event)">
+                            {{ $note->note }}
+                        </textarea>
+                    </div>
+                    <button type="submit" id="submit-btn" class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Note</button>
+                </form>
+                @if (session('success'))
+                    <div class="alert alert-success mt-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
+            </div>
+
         </div>
     </div>
 </div>
 
 <script>
-    function openEditModal(noteId) {
-        // Get the note data from the server
-        axios.get('/note/' + noteId + '/edit')
-            .then(response => {
-                // Update the modal's content with the note data
-                const note = response.data;
-                document.getElementById('note-id').value = noteId; // Update this line
-                document.getElementById('note-content').value = note.note;
-                // Show the modal
-                document.getElementById('modal-edit').classList.add('opacity-100', 'pointer-events-auto');
-            })
-            .catch(error => {
-                console.error(error);
-            });
+    function openEditModal() {
+        document.getElementById('editmodal').classList.add('opacity-100', 'pointer-events-auto');
     }
 
     function closeEditModal() {
-        document.getElementById('modal-edit').classList.remove('opacity-100', 'pointer-events-auto');
+        document.getElementById('editmodal').classList.remove('opacity-100', 'pointer-events-auto');
     }
 
     document.addEventListener('click', function(event) {
-        if (event.target === document.getElementById('edit-modal')) {
+        if (event.target === document.getElementById('editmodal')) {
             closeEditModal();
         }
     });
@@ -54,25 +57,43 @@
         });
     });
 
-    const submitBtn = document.getElementById('submit-btn');
+    const editSubmitBtn = document.getElementById('submit-btn');
 
-    submitBtn.addEventListener('click', function(event) {
-        event.preventDefault();
-        const noteId = document.getElementById('note-id').value;
-        const noteContent = document.getElementById('note-content').value;
+function validateForm() {
+    const noteTextarea = document.getElementById('note');
+    const noteValue = noteTextarea.value;
 
-        axios.put('/note/' + noteId, {
-            id: noteId, // Add this line
-            note: noteContent,
-        })
-        .then(response => {
-            // Hide the modal
-            closeEditModal();
-            // Reload the notes list
-            window.location.reload();
-        })
-        .catch(error => {
-            console.error(error);
+    if (noteValue.trim() === '') {
+        submitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+        submitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please enter some text.',
         });
-    });
+        return false;
+    }
+
+    if (noteValue.length > 1000) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'The text limit of 1000 characters has been exceeded.',
+        });
+        return false;
+    }
+
+    submitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
+    submitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
+    return true;
+}
+
+function allowOnlyLetters(event) {
+    const charCode = event.which || event.keyCode;
+    if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || charCode === 32)) {
+        event.preventDefault();
+        return false;
+    }
+    return true;
+}
 </script>

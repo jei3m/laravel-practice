@@ -25,6 +25,7 @@
                         <td class="text-right p-4" style="white-space: nowrap;">
 
                             {{-- <a class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-4 rounded mr-2" onclick="openEditModal({{$note->id}})">Edit</a> --}}
+                            <a onclick="openEditModal({{$note}})" class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-4 rounded mr-2">Edit Modal</a>
                             <a href="{{ route('note.show', $note) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-4 rounded mr-2">View</a>
                             <a href="{{ route('note.edit', $note) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-4 rounded mr-2">Edit</a>
                             <form action="{{ route('note.destroy', $note) }}" method="POST" style="display:inline;" id="delete-form-{{ $note->id }}">
@@ -82,3 +83,4 @@
 </script>
 
 @include('components.create-modal')
+@include('components.edit-modal')
