@@ -1,4 +1,4 @@
-<x-layout>
+{{-- <x-layout>
     <div class="note-container max-w-lg mx-auto p-4 mt-6 bg-white rounded shadow-md">
         <h1 class="note-title text-3xl font-bold mb-4">Edit Note</h1>
         <form action="{{ route('note.update', $note->id) }}" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
@@ -63,4 +63,4 @@
 
 <script>
 
-</script>
+</script> --}}

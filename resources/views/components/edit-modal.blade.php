@@ -14,14 +14,12 @@
             </div>
 
             <div class="note-container w-full mx-auto">
-                <form action="{{ route('note.update', $note->id) }}" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
+                <form id="editNoteForm" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
                     @csrf
                     @method('PUT')
                     <div class="form-group mb-4">
                         <label for="note" class="block text-lg font-medium text-gray-700">Note Content</label>
-                        <textarea name="note" id="note" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10" onkeypress="return allowOnlyLetters(event)">
-                            {{ $note->note }}
-                        </textarea>
+                        <textarea name="note" id="editNoteContent" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10" onkeypress="return allowOnlyLetters(event)"></textarea>
                     </div>
                     <button type="submit" id="submit-btn" class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Note</button>
                 </form>
@@ -37,63 +35,73 @@
 </div>
 
 <script>
-    function openEditModal() {
-        document.getElementById('editmodal').classList.add('opacity-100', 'pointer-events-auto');
+    function openEditModal(noteData) {
+        const modal = document.getElementById('editmodal');
+        const form = document.getElementById('editNoteForm');
+        const textarea = document.getElementById('editNoteContent');
+        
+        // Set the form action
+        form.action = `/note/${noteData.id}`;
+        
+        // Set the textarea content
+        textarea.value = noteData.note;
+        
+        // Show the modal
+        modal.classList.add('opacity-100', 'pointer-events-auto');
     }
 
     function closeEditModal() {
         document.getElementById('editmodal').classList.remove('opacity-100', 'pointer-events-auto');
     }
 
+    // Close modal when clicking outside
     document.addEventListener('click', function(event) {
-        if (event.target === document.getElementById('editmodal')) {
+        const modal = document.getElementById('editmodal');
+        if (event.target.classList.contains('modal-overlay')) {
             closeEditModal();
         }
     });
 
-    document.querySelectorAll('.modal-close').forEach(function(element) {
-        element.addEventListener('click', function() {
-            closeEditModal();
-        });
-    });
+    // Close modal when clicking the close button
+    document.querySelector('.modal-close').addEventListener('click', closeEditModal);
 
     const editSubmitBtn = document.getElementById('submit-btn');
 
-function validateForm() {
-    const noteTextarea = document.getElementById('note');
-    const noteValue = noteTextarea.value;
+    function validateForm() {
+        const noteTextarea = document.getElementById('editNoteContent');
+        const noteValue = noteTextarea.value;
 
-    if (noteValue.trim() === '') {
-        submitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
-        submitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Please enter some text.',
-        });
-        return false;
+        if (noteValue.trim() === '') {
+            editSubmitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+            editSubmitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter some text.',
+            });
+            return false;
+        }
+
+        if (noteValue.length > 1000) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'The text limit of 1000 characters has been exceeded.',
+            });
+            return false;
+        }
+
+        editSubmitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
+        editSubmitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
+        return true;
     }
 
-    if (noteValue.length > 1000) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'The text limit of 1000 characters has been exceeded.',
-        });
-        return false;
+    function allowOnlyLetters(event) {
+        const charCode = event.which || event.keyCode;
+        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || charCode === 32)) {
+            event.preventDefault();
+            return false;
+        }
+        return true;
     }
-
-    submitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
-    submitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
-    return true;
-}
-
-function allowOnlyLetters(event) {
-    const charCode = event.which || event.keyCode;
-    if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || charCode === 32)) {
-        event.preventDefault();
-        return false;
-    }
-    return true;
-}
 </script>
