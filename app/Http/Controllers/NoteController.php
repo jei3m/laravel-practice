@@ -15,8 +15,10 @@ class NoteController extends Controller
     {
         $search = $request->input('search');
         $perPage = $request->input('perPage', 5);
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'desc');
     
-        $notes = Note::query()->orderBy('created_at', 'desc');
+        $notes = Note::query();
     
         if (!empty($search)) {
             $notes->where(function($query) use ($search) {
@@ -25,10 +27,18 @@ class NoteController extends Controller
                       ->orWhere('author', 'LIKE', '%' . $search . '%');
             });
         }
+
+        // Apply sorting
+        $notes->orderBy($sortBy, $sortOrder);
     
         $notes = $notes->paginate($perPage);
+        $notes->appends(['sort_by' => $sortBy, 'sort_order' => $sortOrder]);
     
-        return view('note.index', ['notes' => $notes]);
+        return view('note.index', [
+            'notes' => $notes,
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder
+        ]);
     }
 
     /**
