@@ -15,7 +15,7 @@
                 {{ session('success') }}
             </div>
         @endif
-    </div>
+    </div>  
 </x-layout>
 
 <script>
