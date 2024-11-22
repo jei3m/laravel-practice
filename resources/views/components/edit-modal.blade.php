@@ -43,6 +43,8 @@
 
 <script>
     let originalNoteContent = '';
+    let originalAuthor = '';
+    let originalYear = '';
 
     function openEditModal(noteData) {
         const modal = document.getElementById('editmodal');
@@ -59,6 +61,8 @@
         authorInput.value = noteData.author;
         yearInput.value = noteData.year;
         originalNoteContent = noteData.note;
+        originalAuthor = noteData.author;
+        originalYear = noteData.year;
         
         // Show the modal
         modal.classList.add('opacity-100', 'pointer-events-auto');
@@ -67,6 +71,8 @@
     function closeEditModal() {
         document.getElementById('editmodal').classList.remove('opacity-100', 'pointer-events-auto');
         originalNoteContent = '';
+        originalAuthor = '';
+        originalYear = '';
     }
 
     document.addEventListener('click', function(event) {
@@ -83,6 +89,14 @@
 
     const editSubmitBtn = document.getElementById('submit-btn');
 
+    function showAlert(config) {
+        return Swal.fire({
+            icon: config.icon || 'error',
+            title: config.title || 'Error',
+            text: config.text
+        });
+    }
+
     function validateForm() {
         const noteTextarea = document.getElementById('editNoteContent');
         const authorInput = document.getElementById('editNoteAuthor');
@@ -91,61 +105,53 @@
         const authorValue = authorInput.value;
         const yearValue = yearInput.value;
 
-        if (noteValue.trim() === '') {
-            editSubmitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
-            editSubmitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter some text.',
+        const validationRules = [
+            {
+                condition: noteValue.trim() === '',
+                message: 'Please enter some text.',
+                action: () => {
+                    editSubmitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+                    editSubmitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
+                }
+            },
+            {
+                condition: authorValue.trim() === '',
+                message: 'Please enter an author name.'
+            },
+            {
+                condition: yearValue.trim() === '',
+                message: 'Please enter a year.'
+            },
+            {
+                condition: !/^\d{4}$/.test(yearValue),
+                message: 'Please enter a valid 4-digit year.'
+            },
+            {
+                condition: noteValue.length > 1000,
+                message: 'The text limit of 1000 characters has been exceeded.'
+            },
+            {
+                condition: noteValue.trim() === originalNoteContent.trim() && 
+                          authorValue.trim() === originalAuthor.trim() && 
+                          yearValue === originalYear,
+                message: 'No changes were made to any fields.',
+                config: { icon: 'warning', title: 'No Changes' }
+            }
+        ];
+
+        const failedRule = validationRules.find(rule => rule.condition);
+        
+        if (failedRule) {
+            if (failedRule.action) {
+                failedRule.action();
+            }
+            showAlert({
+                icon: failedRule.config?.icon || 'error',
+                title: failedRule.config?.title || 'Error',
+                text: failedRule.message
             });
             return false;
         }
-
-        if (authorValue.trim() === '') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter an author name.',
-            });
-            return false;
-        }
-
-        if (yearValue.trim() === '') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter a year.',
-            });
-            return false;
-        }
-
-        if (!/^\d{4}$/.test(yearValue)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter a valid 4-digit year.',
-            });
-            return false;
-        }
-
-        if (noteValue.length > 1000) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'The text limit of 1000 characters has been exceeded.',
-            });
-            return false;
-        }
-
-        // if (noteValue.trim() === originalNoteContent.trim()) {
-        //     Swal.fire({
-        //         icon: 'warning',
-        //         title: 'No Changes',
-        //         text: 'No changes were made to the note.',
-        //     });
-        //     return false;
-        // }    
 
         editSubmitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
         editSubmitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');

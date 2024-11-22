@@ -24,12 +24,12 @@
 
                     <div class="form-group mb-4">
                         <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
-                        <input type="number " name="year" id="year" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" min="1900" max="2100">
+                        <input type="number" name="year" id="year" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" min="1900" max="2100">
                     </div>
 
                     <div class="form-group mb-4">
                         <label for="note" class="block text-lg font-medium text-gray-700">Note Content</label>
-                        <textarea name="note" id="note" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10"></textarea>
+                        <textarea name="note" id="note" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10" onkeypress="return allowOnlyLetters(event)"></textarea>
                     </div>
                     
                     <button type="submit" id="submit-btn" class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Create Note</button>
@@ -66,7 +66,7 @@
         });
     });
 
-    const createSubmitBtn = document.getElementById('submit-btn');
+    const submitBtn = document.getElementById('submit-btn');
 
     function validateCreateForm() {
         const noteTextarea = document.getElementById('note');
@@ -76,67 +76,64 @@
         const authorValue = authorInput.value;
         const yearValue = yearInput.value;
 
-        console.log('Create form submission attempted');
-        console.log('Note value:', noteValue);
-        console.log('Author value:', authorValue);
-        console.log('Year value:', yearValue);
+        const validationRules = [
+            {
+                condition: noteValue.trim() === '',
+                message: 'Please enter some text.',
+                action: () => {
+                    submitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+                    submitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
+                }
+            },
+            {
+                condition: authorValue.trim() === '',
+                message: 'Please enter an author name.'
+            },
+            {
+                condition: yearValue.trim() === '',
+                message: 'Please enter a year.'
+            },
+            {
+                condition: !/^\d{4}$/.test(yearValue),
+                message: 'Please enter a valid 4-digit year.'
+            },
+            {
+                condition: noteValue.length > 1000,
+                message: 'The text limit of 1000 characters has been exceeded.'
+            },
+            {
+                condition: noteValue.trim() === '' && authorValue.trim() === '' && yearValue.trim() === '',
+                message: 'Fields are blank.',
+                config: { icon: 'warning', title: 'No Changes' }
+            }
+        ];
 
-        if (noteValue.trim() === '') {
-            console.log('Empty note detected');
-            createSubmitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
-            createSubmitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter some text.',
+        const failedRule = validationRules.find(rule => rule.condition);
+        
+        if (failedRule) {
+            if (failedRule.action) {
+                failedRule.action();
+            }
+            showAlert({
+                icon: failedRule.config?.icon || 'error',
+                title: failedRule.config?.title || 'Error',
+                text: failedRule.message
             });
             return false;
         }
 
-        if (authorValue.trim() === '') {
-            console.log('Empty author detected');
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter an author name.',
-            });
+        submitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
+        submitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
+        return true;
+    } 
+
+    function allowOnlyLetters(event) {
+        const charCode = event.which || event.keyCode;
+        if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || charCode === 32)) {
+            event.preventDefault();
             return false;
         }
-
-        if (yearValue.trim() === '') {
-            console.log('Empty year detected');
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter a year.',
-            });
-            return false;
-        }
-
-        const yearNum = parseInt(yearValue);
-        if (yearNum < 1900 || yearNum > 2024) {
-            console.log('Invalid year:', yearNum);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter a valid year between 1900 and 2024.',
-            });
-            return false;
-        }
-
-        if (noteValue.length > 1000) {
-            console.log('Note too long:', noteValue.length);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'The text limit of 1000 characters has been exceeded.',
-            });
-            return false;
-        }
-
-        console.log('Form validation passed, submitting...');
-        createSubmitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
-        createSubmitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
         return true;
     }
+
 </script>
