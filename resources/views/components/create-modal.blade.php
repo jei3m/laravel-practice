@@ -24,7 +24,7 @@
 
                     <div class="form-group mb-4">
                         <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
-                        <input type="text" name="year" id="year" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" min="1900" max="2100">
+                        <input type="number " name="year" id="year" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" min="1900" max="2100">
                     </div>
 
                     <div class="form-group mb-4">

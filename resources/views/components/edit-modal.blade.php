@@ -22,10 +22,10 @@
                         <label for="author" class="block text-lg font-medium text-gray-700">Author</label>
                         <input type="text" name="author" id="editNoteAuthor" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500">
                     </div>
-                    
+
                     <div class="form-group mb-4">
                         <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
-                        <input type="text" name="year" id="editNoteYear" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500">
+                        <input type="number" name="year" id="editNoteYear" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500">
                     </div>
 
                     <div class="form-group mb-4">
@@ -120,7 +120,6 @@
             return false;
         }
 
-        // Validate year format (4 digits)
         if (!/^\d{4}$/.test(yearValue)) {
             Swal.fire({
                 icon: 'error',
@@ -139,14 +138,14 @@
             return false;
         }
 
-        if (noteValue.trim() === originalNoteContent.trim()) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No Changes',
-                text: 'No changes were made to the note.',
-            });
-            return false;
-        }
+        // if (noteValue.trim() === originalNoteContent.trim()) {
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'No Changes',
+        //         text: 'No changes were made to the note.',
+        //     });
+        //     return false;
+        // }    
 
         editSubmitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
         editSubmitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
