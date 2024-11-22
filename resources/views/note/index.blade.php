@@ -1,8 +1,8 @@
 <x-layout>
-    <div class="mt-4 max-w-4xl h-auto mx-auto p-4 md:p-6 lg:p-8 bg-white rounded shadow-md">
+    <div class="mt-4 max-w-4xl h-auto mx-auto p-4 bg-white rounded shadow-md">
         <div class="flex justify-between mb-4 space-x-4">
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded" onclick="openCreateModal()">
-                Create New Note
+                Create Note
             </button>
 
             <form action="{{ route('note.index') }}" method="GET" class="flex justify-end">
@@ -27,7 +27,6 @@
 
 
                             <a href="{{ route('note.show', $note) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2.5 px-4 rounded mr-2">View</a>
-                            {{-- <a href="{{ route('note.edit', $note) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-4 rounded mr-2">Edit</a> --}}
                             <button onclick="openEditModal({{json_encode($note)}})" class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-4 rounded mr-2">Edit</button>
                             <form action="{{ route('note.destroy', $note) }}" method="POST" style="display:inline;" id="delete-form-{{ $note->id }}">
                                 @csrf
@@ -38,7 +37,7 @@
                     </tr>
                 @endforeach
             </tbody>
-            
+
         </table>
 
         <div class="pagination mt-4 p-4">
