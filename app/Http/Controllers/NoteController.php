@@ -10,9 +10,20 @@ class NoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(Request $request)
     {
-        $notes = Note::query()->orderBy('created_at', 'desc')->paginate();
+        $search = $request->input('search');
+        $perPage = $request->input('perPage', 5); // default to 10 per page
+    
+        $notes = Note::query()->orderBy('created_at', 'desc');
+    
+        if (!empty($search)) {
+            $notes->where('note', 'LIKE', '%' . $search . '%');
+        }
+    
+        $notes = $notes->paginate($perPage);
+    
         return view('note.index', ['notes' => $notes]);
     }
 
@@ -72,6 +83,7 @@ class NoteController extends Controller
         $note->save();
     
         return redirect()->route('note.index')->with('success', 'Note updated successfully!');
+        // return response()->json(['message' => 'Note updated successfully!']);
     }
 
     /**
@@ -83,4 +95,10 @@ class NoteController extends Controller
 
         return redirect()->route('note.index')->with('success', 'Note deleted successfully!');
     }
+
+    // public function editAjax(Note $note)
+    // {
+    //     return response()->json($note);
+    // }
+    
 }
