@@ -17,10 +17,22 @@
                 <form id="editNoteForm" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
                     @csrf
                     @method('PUT')
+
+                    <div class="form-group mb-4">
+                        <label for="author" class="block text-lg font-medium text-gray-700">Author</label>
+                        <input type="text" name="author" id="editNoteAuthor" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500">
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
+                        <input type="text" name="year" id="editNoteYear" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500">
+                    </div>
+
                     <div class="form-group mb-4">
                         <label for="note" class="block text-lg font-medium text-gray-700">Note Content</label>
                         <textarea name="note" id="editNoteContent" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10" onkeypress="return allowOnlyLetters(event)"></textarea>
                     </div>
+
                     <button type="submit" id="submit-btn" class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update Note</button>
                 </form>
             </div>
@@ -36,12 +48,16 @@
         const modal = document.getElementById('editmodal');
         const form = document.getElementById('editNoteForm');
         const textarea = document.getElementById('editNoteContent');
+        const authorInput = document.getElementById('editNoteAuthor');
+        const yearInput = document.getElementById('editNoteYear');
         
         // Set the form action
         form.action = `/note/${noteData.id}`;
         
-        // Set the textarea content and store original content
+        // Set the form fields and store original content
         textarea.value = noteData.note;
+        authorInput.value = noteData.author;
+        yearInput.value = noteData.year;
         originalNoteContent = noteData.note;
         
         // Show the modal
@@ -53,14 +69,12 @@
         originalNoteContent = '';
     }
 
-    // Close modal when clicking outside
     document.addEventListener('click', function(event) {
         if (event.target === document.getElementById('editmodal')) {
             closeEditModal();
         }
     });
 
-    // Close modal when clicking any close button
     document.querySelectorAll('.editmodal-close').forEach(function(element) {
         element.addEventListener('click', function() {
             closeEditModal();
@@ -71,7 +85,11 @@
 
     function validateForm() {
         const noteTextarea = document.getElementById('editNoteContent');
+        const authorInput = document.getElementById('editNoteAuthor');
+        const yearInput = document.getElementById('editNoteYear');
         const noteValue = noteTextarea.value;
+        const authorValue = authorInput.value;
+        const yearValue = yearInput.value;
 
         if (noteValue.trim() === '') {
             editSubmitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
@@ -80,6 +98,34 @@
                 icon: 'error',
                 title: 'Error',
                 text: 'Please enter some text.',
+            });
+            return false;
+        }
+
+        if (authorValue.trim() === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter an author name.',
+            });
+            return false;
+        }
+
+        if (yearValue.trim() === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a year.',
+            });
+            return false;
+        }
+
+        // Validate year format (4 digits)
+        if (!/^\d{4}$/.test(yearValue)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a valid 4-digit year.',
             });
             return false;
         }

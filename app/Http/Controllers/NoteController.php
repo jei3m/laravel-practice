@@ -19,7 +19,11 @@ class NoteController extends Controller
         $notes = Note::query()->orderBy('created_at', 'desc');
     
         if (!empty($search)) {
-            $notes->where('note', 'LIKE', '%' . $search . '%');
+            $notes->where(function($query) use ($search) {
+                $query->where('note', 'LIKE', '%' . $search . '%')
+                      ->orWhere('year', 'LIKE', '%' . $search . '%')
+                      ->orWhere('author', 'LIKE', '%' . $search . '%');
+            });
         }
     
         $notes = $notes->paginate($perPage);
@@ -40,18 +44,19 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'note' => 'required',
+            'author' => 'required',
+            'year' => 'required'
         ]);
     
         $note = new Note();
         $note->note = $request->input('note');
-        $note->user_id = 1;
+        $note->author = $request->input('author');
+        $note->year = $request->input('year');
         $note->save();
     
         return redirect()->route('note.index')->with('success', 'Note created successfully!');
-    
     }
 
     /**

@@ -2,7 +2,7 @@
     <div class="modal-close modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
     <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
 
-        <!-- Add your modal content here -->
+        <!-- Modal Content Here -->
         <div class="modal-content py-4 text-left px-6">
             <div class="flex justify-between items-center pb-3">
                 <p class="text-2xl font-bold">Create New Note</p>
@@ -16,6 +16,17 @@
             <div class="note-container w-full mx-auto">
                 <form action="{{ route('note.store') }}" method="POST" class="note-form flex flex-col" onsubmit="return validateCreateForm()">
                     @csrf
+
+                    <div class="form-group mb-4">
+                        <label for="author" class="block text-lg font-medium text-gray-700">Author</label>
+                        <input type="text" name="author" id="author" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500">
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="year" class="block text-lg font-medium text-gray-700">Year</label>
+                        <input type="text" name="year" id="year" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" min="1900" max="2100">
+                    </div>
+
                     <div class="form-group mb-4">
                         <label for="note" class="block text-lg font-medium text-gray-700">Note Content</label>
                         <textarea name="note" id="note" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10"></textarea>
@@ -59,10 +70,16 @@
 
     function validateCreateForm() {
         const noteTextarea = document.getElementById('note');
+        const authorInput = document.getElementById('author');
+        const yearInput = document.getElementById('year');
         const noteValue = noteTextarea.value;
+        const authorValue = authorInput.value;
+        const yearValue = yearInput.value;
 
         console.log('Create form submission attempted');
         console.log('Note value:', noteValue);
+        console.log('Author value:', authorValue);
+        console.log('Year value:', yearValue);
 
         if (noteValue.trim() === '') {
             console.log('Empty note detected');
@@ -72,6 +89,37 @@
                 icon: 'error',
                 title: 'Error',
                 text: 'Please enter some text.',
+            });
+            return false;
+        }
+
+        if (authorValue.trim() === '') {
+            console.log('Empty author detected');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter an author name.',
+            });
+            return false;
+        }
+
+        if (yearValue.trim() === '') {
+            console.log('Empty year detected');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a year.',
+            });
+            return false;
+        }
+
+        const yearNum = parseInt(yearValue);
+        if (yearNum < 1900 || yearNum > 2024) {
+            console.log('Invalid year:', yearNum);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a valid year between 1900 and 2024.',
             });
             return false;
         }
