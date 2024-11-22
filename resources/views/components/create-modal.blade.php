@@ -14,11 +14,11 @@
             </div>
 
             <div class="note-container w-full mx-auto">
-                <form action="{{ route('note.store') }}" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
+                <form action="{{ route('note.store') }}" method="POST" class="note-form flex flex-col" onsubmit="return validateCreateForm()">
                     @csrf
                     <div class="form-group mb-4">
                         <label for="note" class="block text-lg font-medium text-gray-700">Note Content</label>
-                        <textarea name="note" id="note" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10" onkeypress="return allowOnlyLetters(event)" ></textarea>
+                        <textarea name="note" id="note" class="w-full form-control p-2 pl-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500" rows="10"></textarea>
                     </div>
                     
                     <button type="submit" id="submit-btn" class="btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Create Note</button>
@@ -57,41 +57,38 @@
 
     const createSubmitBtn = document.getElementById('submit-btn');
 
-function validateForm() {
-    const noteTextarea = document.getElementById('note');
-    const noteValue = noteTextarea.value;
+    function validateCreateForm() {
+        const noteTextarea = document.getElementById('note');
+        const noteValue = noteTextarea.value;
 
-    if (noteValue.trim() === '') {
-        submitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
-        submitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Please enter some text.',
-        });
-        return false;
+        console.log('Create form submission attempted');
+        console.log('Note value:', noteValue);
+
+        if (noteValue.trim() === '') {
+            console.log('Empty note detected');
+            createSubmitBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
+            createSubmitBtn.classList.add('bg-red-500', 'hover:bg-red-700');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter some text.',
+            });
+            return false;
+        }
+
+        if (noteValue.length > 1000) {
+            console.log('Note too long:', noteValue.length);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'The text limit of 1000 characters has been exceeded.',
+            });
+            return false;
+        }
+
+        console.log('Form validation passed, submitting...');
+        createSubmitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
+        createSubmitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
+        return true;
     }
-
-    if (noteValue.length > 1000) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'The text limit of 1000 characters has been exceeded.',
-        });
-        return false;
-    }
-
-    submitBtn.classList.remove('bg-red-500', 'hover:bg-red-700');
-    submitBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
-    return true;
-}
-
-function allowOnlyLetters(event) {
-    const charCode = event.which || event.keyCode;
-    if (!((charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122) || charCode === 32)) {
-        event.preventDefault();
-        return false;
-    }
-    return true;
-}
 </script>

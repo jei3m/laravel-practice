@@ -50,8 +50,8 @@ class NoteController extends Controller
         $note->user_id = 1;
         $note->save();
     
-        return redirect()->route('note.index')->with('success', 'Note created successfully!');
-    
+        return redirect()->route('note.index', ['status' => 'created'])->with('success', 'Note updated successfully!');
+
     }
 
     /**
@@ -82,8 +82,7 @@ class NoteController extends Controller
         $note->note = $request->input('note');
         $note->save();
     
-        return redirect()->route('note.index')->with('success', 'Note updated successfully!');
-        // return response()->json(['message' => 'Note updated successfully!']);
+        return redirect()->route('note.index', ['status' => 'updated'])->with('success', 'Note updated successfully!');
     }
 
     /**
@@ -96,9 +95,4 @@ class NoteController extends Controller
         return redirect()->route('note.index')->with('success', 'Note deleted successfully!');
     }
 
-    // public function editAjax(Note $note)
-    // {
-    //     return response()->json($note);
-    // }
-    
 }
