@@ -1,17 +1,16 @@
 @if ($paginator->hasPages())
     <nav>
-        <div class="flex justify-between items-center">
-            <div class="flex justify-start items-center">            
+        <div class="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center">
+            <div class="flex items-center space-x-2">            
                 <span>Showing</span>
-                    <form action="{{ route('note.index') }}" method="GET" class="flex justify-end border border-gray-300 px-1 rounded-full ml-1 mr-2">
-                        <select name="perPage" class="ml-2 mr-2" onchange="this.form.submit()">
-                            @foreach ([5, 10, 25, 50] as $option)
-                                <option value="{{ $option }}" {{ request('perPage') == $option ? 'selected' : '' }}>{{ $option }}</option>
-                            @endforeach
-                        </select>
-                    </form>
+                <form action="{{ route('note.index') }}" method="GET" class="flex items-center">
+                    <select name="perPage" class="h-10 px-2 border border-gray-300 rounded" onchange="this.form.submit()">
+                        @foreach ([5, 10, 25, 50] as $option)
+                            <option value="{{ $option }}" {{ request('perPage') == $option ? 'selected' : '' }}>{{ $option }}</option>
+                        @endforeach
+                    </select>
+                </form>
                 <span> of {{ $paginator->total() }} entries</span>
-
             </div>
             <ul class="flex justify-center items-center">
                 {{-- Previous Page Link --}}
@@ -27,12 +26,7 @@
 
                 {{-- Pagination Elements --}}
                 @foreach ($elements as $element)
-                    {{-- "Three Dots" Separator --}}
-                    @if (is_string($element))
-                        <li class="px-3 py-2 text-gray-400 cursor-not-allowed" aria-disabled="true">
-                            <span>{{ $element }}</span>
-                        </li>
-                    @endif
+       
 
                     {{-- Array Of Links --}}
                     @if (is_array($element))
@@ -65,20 +59,18 @@
     </nav>
 
 @else
-    <div class="flex justify-between items-center">
-        <div class="flex justify-start items-center">            
+    <div class="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center">
+        <div class="flex items-center space-x-2">            
             <span>Show</span>
-            <form action="{{ route('note.index') }}" method="GET" class="flex justify-end">
-                <select name="perPage" class="ml-2" onchange="this.form.submit()">
+            <form action="{{ route('note.index') }}" method="GET" class="flex items-center">
+                <select name="perPage" class="h-10 px-2 border border-gray-300 rounded" onchange="this.form.submit()">
                     @foreach ([5, 10, 25, 50] as $option)
                         <option value="{{ $option }}" {{ request('perPage') == $option ? 'selected' : '' }}>{{ $option }}</option>
                     @endforeach
                 </select>
+                <span class="ml-2">entries</span>
             </form>
-            <span class="ml-2">entries</span>
         </div>
-        <p class="flex justify-end text-gray-400">Showing all {{ $paginator->total() }} notes on one page.</p>
-
+        <p class="text-gray-400">Showing all {{ $paginator->total() }} notes on one page.</p>
     </div>
-
 @endif
