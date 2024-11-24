@@ -18,6 +18,7 @@ class NoteController extends Controller
         $sortBy = $request->input('sort_by', 'created_at');
         $sortOrder = $request->input('sort_order', 'desc');
     
+        // Search function
         $notes = Note::query();
     
         if (!empty($search)) {
@@ -28,11 +29,19 @@ class NoteController extends Controller
             });
         }
 
-        // Apply sorting
-        $notes->orderBy($sortBy, $sortOrder);
+        // Apply sorting only if not "all"
+        if ($sortBy !== 'all') {
+            $notes->orderBy($sortBy, $sortOrder);
+        }
     
         $notes = $notes->paginate($perPage);
-        $notes->appends(['sort_by' => $sortBy, 'sort_order' => $sortOrder]);
+
+        $notes->appends([
+            'perPage' => $perPage,
+            'sort_by' => $sortBy,
+            'sort_order' => $sortOrder,
+            'search' => $search
+        ]);
     
         return view('note.index', [
             'notes' => $notes,
