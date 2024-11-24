@@ -75,7 +75,11 @@ class NoteController extends Controller
         $note->year = $request->input('year');
         $note->save();
     
-        return redirect()->route('note.index')->with('success', 'Note created successfully!');
+        return redirect()->route('note.index', [
+            'perPage' => $request->input('perPage', 5),
+            'sort_by' => $request->input('sort_by', 'all'),
+            'sort_order' => $request->input('sort_order', 'desc')
+        ])->with('success', 'Note created successfully!');
     }
 
     /**
