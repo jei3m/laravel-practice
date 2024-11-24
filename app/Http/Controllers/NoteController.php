@@ -36,6 +36,7 @@ class NoteController extends Controller
     
         $notes = $notes->paginate($perPage);
 
+        // For URL parameters
         $notes->appends([
             'perPage' => $perPage,
             'sort_by' => $sortBy,
@@ -43,6 +44,7 @@ class NoteController extends Controller
             'search' => $search
         ]);
     
+        // Return index view with pagination and sorting
         return view('note.index', [
             'notes' => $notes,
             'sortBy' => $sortBy,
@@ -75,6 +77,7 @@ class NoteController extends Controller
         $note->year = $request->input('year');
         $note->save();
     
+        // Redirect back to the index page with the sorting and pagination parameters
         return redirect()->route('note.index', [
             'perPage' => $request->input('perPage', 5),
             'sort_by' => $request->input('sort_by', 'all'),
@@ -123,9 +126,4 @@ class NoteController extends Controller
         return redirect()->route('note.index')->with('success', 'Note deleted successfully!');
     }
 
-    // public function editAjax(Note $note)
-    // {
-    //     return response()->json($note);
-    // }
-    
 }
