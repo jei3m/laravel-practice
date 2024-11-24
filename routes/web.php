@@ -24,6 +24,6 @@ Route::delete('/note/{id}', [NoteController::class, 'destroy'])->name('note.dest
 Route::post('/note', [NoteController::class, 'store'])->name('note.store');
 
 // To EDIT NOTES
-Route::put('/notes/{note}', [NoteController::class, 'update'])->name('note.update');
+Route::put('/note/{note}', [NoteController::class, 'update'])->name('note.update');
 
 Route::get('/note/{id}', [NoteController::class, 'show'])->name('note.show');
