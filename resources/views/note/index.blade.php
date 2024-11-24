@@ -7,8 +7,9 @@
                 </button>
                 
                 <form action="{{ route('note.index') }}" method="GET" class="flex items-center border border-gray-300 rounded-md mr-1">
-                    
+                    <input type="hidden" name="perPage" value="{{ request('perPage', 5) }}">
                     <select name="sort_by" class="p-2" onchange="this.form.submit()">
+                        <option value="all" {{ request('sort_by') == 'all' || !request('sort_by') ? 'selected' : '' }}>Show All</option>
                         <option value="note" {{ request('sort_by') == 'note' ? 'selected' : '' }}>Sort by Note</option>
                         <option value="author" {{ request('sort_by') == 'author' ? 'selected' : '' }}>Sort by Author</option>
                         <option value="year" {{ request('sort_by') == 'year' ? 'selected' : '' }}>Sort by Year</option>
@@ -24,18 +25,31 @@
             </div>
 
             <form action="{{ route('note.index') }}" method="GET" class="flex justify-end">
+                <input type="hidden" name="perPage" value="{{ request('perPage', 5) }}">
+                <input type="hidden" name="sort_by" value="{{ request('sort_by', 'all') }}">
+                <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}">
                 <input type="search" name="search" value="{{ request('search') }}" placeholder="Search notes..." class="w-full p-2 pl-4 text-lg border border-gray-300 rounded-l">
                 <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 px-4 rounded-r">Search</button>
             </form>
+            
         </div>
 
         <table class="w-full table-auto border-collapse">
 
             <thead>
                 <tr>
-                    <th class="text-left p-4 w-3/4">Note</th>
-                    <th class="text-left p-4 w-3/4">Author</th>
-                    <th class="text-left p-4 w-3/4">Year</th>
+                    @if(request('sort_by') == 'all' || request('sort_by') == 'note')
+                        <th class="text-left p-4 w-3/4">Note</th>
+                    @endif
+
+                    @if(request('sort_by') == 'all' || request('sort_by') == 'author')
+                        <th class="text-left p-4 w-3/4">Author</th>
+                    @endif
+
+                    @if(request('sort_by') == 'all' || request('sort_by') == 'year')
+                        <th class="text-left p-4 w-3/4">Year</th>
+                    @endif
+                    
                     <th class="text-right p-4 w-1/4">Actions</th>
                 </tr>
             </thead>
@@ -43,9 +57,15 @@
             <tbody>
                 @foreach ($notes as $note)
                     <tr>
-                        <td class="p-4">{{ Str::limit($note->note, 50) }}</td>  
-                        <td class="p-4">{{ ($note->author) }}</td>  
-                        <td class="p-4">{{ ($note->year) }}</td>  
+                        @if(request('sort_by') == 'all' || !request('sort_by') || request('sort_by') == 'note')
+                            <td class="p-4">{{ Str::limit($note->note, 50) }}</td>  
+                        @endif
+                        @if(request('sort_by') == 'all' || !request('sort_by') || request('sort_by') == 'author')
+                            <td class="p-4">{{ ($note->author) }}</td>  
+                        @endif
+                        @if(request('sort_by') == 'all' || !request('sort_by') || request('sort_by') == 'year')
+                            <td class="p-4">{{ ($note->year) }}</td>  
+                        @endif
                         
                         <td class="text-right p-4" style="white-space: nowrap;">
 
@@ -79,7 +99,7 @@
                     confirmButtonColor: '#3085d6'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Redirect to /notes when the "OK" button is clicked
+                    
                         window.location.href = '/note';
                     }
                 });
