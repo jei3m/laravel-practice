@@ -6,6 +6,7 @@
                     Create Note
                 </button>
                 
+                {{-- Dropdown for sorting --}}
                 <form action="{{ route('note.index') }}" method="GET" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 rounded-md">
                     <input type="hidden" name="perPage" value="{{ request('perPage', 5) }}">
                     <select name="sort_by" class="w-full sm:w-auto rounded border border-gray-300 h-10 px-2" onchange="this.form.submit()">
@@ -14,14 +15,18 @@
                         <option value="author" {{ request('sort_by') == 'author' ? 'selected' : '' }}>Sort by Author</option>
                         <option value="year" {{ request('sort_by') == 'year' ? 'selected' : '' }}>Sort by Year</option>
                     </select>
-                    
-                    <select name="sort_order" class="w-full sm:w-auto rounded border border-gray-300 h-10 px-2" onchange="this.form.submit()">
-                        <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
-                        <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Descending</option>
-                    </select>
+
+                    @if (request('sort_by') == 'author' || request('sort_by') == 'note' || request('sort_by') == 'year')
+                        <select name="sort_order" class="w-full sm:w-auto rounded border border-gray-300 h-10 px-2" onchange="this.form.submit()">
+                            <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
+                            <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Descending</option>
+                        </select>
+                    @endif
+
                 </form>
             </div>
 
+            {{-- Search function while maintaining selected filtering and pagination value --}}
             <form action="{{ route('note.index') }}" method="GET" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0">
                 <input type="hidden" name="perPage" value="{{ request('perPage', 5) }}">
                 <input type="hidden" name="sort_by" value="{{ request('sort_by', 'all') }}">
@@ -31,19 +36,20 @@
             </form>
         </div>
 
+        {{-- Table Header depending on which column it is --}}
         <div class="overflow-x-auto">
             <table class="overflow-x-auto w-full table-auto border-collapse min-w-full">
                 <thead>
                     <tr class="bg-gray-50">
-                        @if(request('sort_by') == 'all' || request('sort_by') == 'note')
+                        @if(request('sort_by') == 'all' || request('sort_by') == 'note' || request('sort_by') == '')
                             <th class="text-left p-4">Note</th>
                         @endif
 
-                        @if(request('sort_by') == 'all' || request('sort_by') == 'author')
+                        @if(request('sort_by') == 'all' || request('sort_by') == 'author' || request('sort_by') == '' )
                             <th class="text-left p-4">Author</th>
                         @endif
 
-                        @if(request('sort_by') == 'all' || request('sort_by') == 'year')
+                        @if(request('sort_by') == 'all' || request('sort_by') == 'year' || request('sort_by') == '')
                             <th class="text-left p-4">Year</th>
                         @endif
                         
@@ -51,6 +57,7 @@
                     </tr>
                 </thead>
 
+                {{-- Table data which are notes, author, and year. Also action dropdown --}}
                 <tbody>
                     @foreach ($notes as $note)
                         <tr class="border-t border-gray-200 hover:bg-gray-50">
@@ -82,10 +89,12 @@
             </table>
         </div>
 
+        {{-- Pagination Component --}}
         <div class="pagination mt-4 p-4 overflow-x-auto">
             {{ $notes->appends(['perPage' => request('perPage'), 'sort_by' => request('sort_by'), 'sort_order' => request('sort_order')])->links('components.pagination') }}
         </div>
         
+        {{-- Sweet Alert for Edit and Create success --}}
         @if (session('success'))
             <script>
                 Swal.fire({
@@ -108,6 +117,7 @@
 </x-layout>
 
 <script>
+    // Sweet Alert for Delete
     function confirmDelete(id) {
         Swal.fire({
             title: 'Are you sure?',
