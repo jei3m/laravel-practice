@@ -15,6 +15,7 @@
 
             <div class="note-container w-full mx-auto">
                 <form id="editNoteForm" method="POST" class="note-form flex flex-col" onsubmit="return validateForm()">
+                    
                     @csrf
                     @method('PUT')
 
